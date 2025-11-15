@@ -23,3 +23,7 @@ app.listen(port, () => {
 app.get("/", (req, res) => {
   res.send("hi");
 });
+
+app.get("/main", (req, res) => {
+  res.send("you contacted main");
+});
