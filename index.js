@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const Listing = require("./models/listing");
 const mongoose = require("mongoose");
 
 // mongo db connection
@@ -24,6 +25,15 @@ app.get("/", (req, res) => {
   res.send("hi");
 });
 
-app.get("/main", (req, res) => {
-  res.send("you contacted main");
+app.get("/testListing", async (req, res) => {
+  let sampleListing = new Listing({
+    title: "My new villa",
+    description: "By the beach",
+    price: 15000,
+    location: "Karachi, Sindh",
+    country: "Pakistan",
+  });
+  await sampleListing.save();
+  console.log("sample was saved");
+  res.send("successful testing");
 });
