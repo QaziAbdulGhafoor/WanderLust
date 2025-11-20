@@ -9,10 +9,10 @@
     <div class="post">
       <h1>Title:<%=listing.title%></h1>
       <p>Description:<%=listing.description%></p>
-      <img src="<%=listing.image%>" /> alt="" />
+      <img src="<%=listing.image%>" alt="" />
       <p>Country:<%=listing.country%></p>
       <p>Location:<%=listing.location%></p>
-      <p>Price:<%=listing.price%></p>
+      <p>Price: &#8377;<%=listing.price.toLocaleString("en-IN")%></p>
     </div>
   </body>
 </html>

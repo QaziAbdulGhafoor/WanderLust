@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>New</title>
+  </head>
+  <body>
+    <form action="/listings" method="post">
+      <label for="title">Title of Place:</label>
+      <input type="text" id="title" name="listing[title]" /><br /><br />
+      <label for="desc">Describe what you provide:</label>
+      <input type="text" id="desc" name="listing[description]" /><br /><br />
+      <label for="img">Provide a valid image link:</label>
+      <input type="text" id="img" name="listing[image]" /><br /><br />
+      <label for="country">Give Country:</label>
+      <input type="text" id="country" name="listing[country]" /><br /><br />
+      <label for="location">Give Exact location(City):</label>
+      <input type="text" id="location" name="listing[location]" /><br /><br />
+      <label for="price">How much you would charge:</label>
+      <input type="text" id="price" name="listing[price]" /><br /><br />
+      <button>Add listing</button>
+    </form>
+  </body>
+</html>
