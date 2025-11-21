@@ -2,10 +2,15 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const Listing = require("./models/listing");
+const methodOverride = require("method-override");
 const mongoose = require("mongoose");
+const ejsMate = require("ejs-mate");
+
 app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
+app.set("views", path.join(__dirname, "views/listings"));
 app.use(express.urlencoded({ extended: true }));
+app.use(methodOverride("_method"));
+app.engine("ejs", ejsMate);
 
 // mongo db connection
 
@@ -42,8 +47,21 @@ app.get("/listings/new", (req, res) => {
 app.get("/listings/:id", async (req, res) => {
   let { id } = req.params;
   let listing = await Listing.findById(id);
-  console.log(listing);
   res.render("listingd.ejs", { listing });
+});
+
+app.get("/listings/:id/edit", async (req, res) => {
+  let { id } = req.params;
+  let listing = await Listing.findById(id);
+  res.render("edit.ejs", { listing });
+  // console.log(listing);
+  // res.render("listingd.ejs", { listing });
+});
+
+app.put("/listings/:id", async (req, res) => {
+  let { id } = req.params;
+  await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+  res.redirect(`/listings/${id}`);
 });
 
 app.post("/listings", (req, res) => {
@@ -56,6 +74,12 @@ app.post("/listings", (req, res) => {
     .catch((err) => {
       console.log("stoppppppppp", err);
     });
+  res.redirect("/listings");
+});
+
+app.delete("/listings/:id", async (req, res) => {
+  let { id } = req.params;
+  await Listing.findByIdAndDelete(id);
   res.redirect("/listings");
 });
 
