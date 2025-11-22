@@ -100,3 +100,19 @@ body {
   transform: scale(1.2);
   box-shadow: 2px 2px 4px grey;
 }
+
+.myimg {
+  height: 15rem;
+}
+
+.btn-holder {
+  display: flex;
+}
+
+.del {
+  margin-left: 1rem;
+}
+
+.li-det {
+  padding-left: 0 !important;
+}
