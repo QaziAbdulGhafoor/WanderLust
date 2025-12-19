@@ -5,6 +5,19 @@ const Listing = require("./models/listing");
 const methodOverride = require("method-override");
 const mongoose = require("mongoose");
 const ejsMate = require("ejs-mate");
+const wrapAsync = require("./utils/wrapAsync.js");
+const ExpressError = require("./utils/ExpressError.js");
+const listingSchema = require("./schema.js");
+const Joi = require("joi");
+const validateSchema = (req, res, next) => {
+  let { error } = listingSchema.validate(req.body);
+  console.log(error);
+  if (error) {
+    throw new ExpressError(400, error);
+  } else {
+    next();
+  }
+};
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views/listings"));
@@ -14,7 +27,6 @@ app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 
 // mongo db connection
-
 main()
   .then(() => {
     console.log("connected to mongo db");
@@ -27,62 +39,75 @@ async function main() {
 }
 
 const port = 8080;
-app.listen(port, () => {
-  console.log("listening to port");
-});
 
 app.get("/", (req, res) => {
   res.send("hi");
 });
 
-app.get("/listings", async (req, res) => {
-  let listings = await Listing.find();
-  res.render("index.ejs", { listings });
-  // console.log(listings);
-});
+//all listings
+app.get(
+  "/listings",
+  wrapAsync(async (req, res) => {
+    let listings = await Listing.find();
+    res.render("index.ejs", { listings });
+  })
+);
 
+// new listing
 app.get("/listings/new", (req, res) => {
   res.render("new.ejs");
 });
 
-app.get("/listings/:id", async (req, res) => {
-  let { id } = req.params;
-  let listing = await Listing.findById(id);
-  res.render("listingd.ejs", { listing });
-});
+//deatiled listing
+app.get(
+  "/listings/:id",
+  wrapAsync(async (req, res) => {
+    let { id } = req.params;
+    let listing = await Listing.findById(id);
+    res.render("listingd.ejs", { listing });
+  })
+);
 
-app.get("/listings/:id/edit", async (req, res) => {
-  let { id } = req.params;
-  let listing = await Listing.findById(id);
-  res.render("edit.ejs", { listing });
-  // console.log(listing);
-  // res.render("listingd.ejs", { listing });
-});
+//edit listing
+app.get(
+  "/listings/:id/edit",
+  wrapAsync(async (req, res) => {
+    let { id } = req.params;
+    let listing = await Listing.findById(id);
+    res.render("edit.ejs", { listing });
+  })
+);
 
-app.put("/listings/:id", async (req, res) => {
-  let { id } = req.params;
-  await Listing.findByIdAndUpdate(id, { ...req.body.listing });
-  res.redirect(`/listings/${id}`);
-});
+//update listing
+app.put(
+  "/listings/:id",
+  wrapAsync(async (req, res) => {
+    let { id } = req.params;
+    await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+    res.redirect(`/listings/${id}`);
+  })
+);
 
-app.post("/listings", (req, res) => {
-  let newListing = new Listing(req.body.listing);
-  newListing
-    .save()
-    .then((res) => {
-      console.log(res);
-    })
-    .catch((err) => {
-      console.log("stoppppppppp", err);
-    });
-  res.redirect("/listings");
-});
+//posting new listing
+app.post(
+  "/listings",
+  validateSchema,
+  wrapAsync(async (req, res, next) => {
+    let newListing = new Listing(req.body.listing);
+    await newListing.save();
+    res.redirect("/listings");
+  })
+);
 
-app.delete("/listings/:id", async (req, res) => {
-  let { id } = req.params;
-  await Listing.findByIdAndDelete(id);
-  res.redirect("/listings");
-});
+//delete listing
+app.delete(
+  "/listings/:id",
+  wrapAsync(async (req, res) => {
+    let { id } = req.params;
+    await Listing.findByIdAndDelete(id);
+    res.redirect("/listings");
+  })
+);
 
 // app.get("/testListing", async (req, res) => {
 //   let sampleListing = new Listing({
@@ -96,3 +121,17 @@ app.delete("/listings/:id", async (req, res) => {
 //   console.log("sample was saved");
 //   res.send("successful testing");
 // });
+
+// app.all("*", (req, res, next) => {
+//   res.send("page not found");
+// });
+
+//error handling middleware
+app.use((err, req, res, next) => {
+  let { status = 500, message = "smething went wrong" } = err;
+  res.status(status).render("error.ejs", { err });
+});
+
+app.listen(port, () => {
+  console.log("listening to port");
+});

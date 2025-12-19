@@ -4,7 +4,12 @@
     <div class="col col-8 offset-2">
       <h1>Update Listing</h1>
       <br />
-      <form action="/listings/<%=listing._id%>?_method=PUT" method="post">
+      <form
+        action="/listings/<%=listing._id%>?_method=PUT"
+        method="post"
+        class="needs-validation"
+        novalidate
+      >
         <div class="mb-3">
           <label for="title" class="form-label">Title of Place:</label>
           <input
@@ -13,7 +18,9 @@
             value="<%=listing.title%>"
             name="listing[title]"
             class="form-control"
+            required
           />
+          <div class="invalid-feedback">Title is required!</div>
         </div>
         <div class="mb-3">
           <label for="desc" class="form-label"
@@ -24,9 +31,11 @@
             id="desc"
             name="listing[description]"
             class="form-control"
+            required
           >
 <%=listing.description%></textarea
           >
+          <div class="invalid-feedback">decription is required!</div>
         </div>
         <div class="mb-3">
           <label for="img" class="form-label"
@@ -38,7 +47,9 @@
             value="<%=listing.image%>"
             name="listing[image]"
             class="form-control"
+            required
           />
+          <div class="invalid-feedback">image is required!</div>
         </div>
         <div class="row">
           <div class="mb-3 col-md-4">
@@ -49,7 +60,9 @@
               value="<%=listing.price%>"
               name="listing[price]"
               class="form-control"
+              required
             />
+            <div class="invalid-feedback">Price is required!</div>
           </div>
           <div class="mb-3 col-md-8">
             <label for="country" class="form-label">Country:</label>
@@ -59,7 +72,9 @@
               value="<%=listing.country%>"
               name="listing[country]"
               class="form-control"
+              required
             />
+            <div class="invalid-feedback">Country is required!</div>
           </div>
         </div>
         <div class="mb-3">
@@ -70,7 +85,9 @@
             value="<%=listing.location%>"
             name="listing[location]"
             class="form-control"
+            required
           />
+          <div class="invalid-feedback">Location is required!</div>
         </div>
         <br />
         <button class="btn btn-dark add-btn">UPDATE</button><br />
