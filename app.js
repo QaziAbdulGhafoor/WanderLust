@@ -2,15 +2,31 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const Listing = require("./models/listing");
+const Review = require("./models/review");
 const methodOverride = require("method-override");
 const mongoose = require("mongoose");
 const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
-const listingSchema = require("./schema.js");
+const { listingSchema, reviewSchema } = require("./schema.js");
 const Joi = require("joi");
-const validateSchema = (req, res, next) => {
+
+// validation for adding a new listing
+
+const validateListing = (req, res, next) => {
   let { error } = listingSchema.validate(req.body);
+  console.log(error);
+  if (error) {
+    throw new ExpressError(400, error);
+  } else {
+    next();
+  }
+};
+
+//review validation
+
+const validateReview = (req, res, next) => {
+  let { error } = reviewSchema.validate(req.body);
   console.log(error);
   if (error) {
     throw new ExpressError(400, error);
@@ -63,7 +79,7 @@ app.get(
   "/listings/:id",
   wrapAsync(async (req, res) => {
     let { id } = req.params;
-    let listing = await Listing.findById(id);
+    let listing = await Listing.findById(id).populate("reviews");
     res.render("listingd.ejs", { listing });
   })
 );
@@ -91,7 +107,7 @@ app.put(
 //posting new listing
 app.post(
   "/listings",
-  validateSchema,
+  validateListing,
   wrapAsync(async (req, res, next) => {
     let newListing = new Listing(req.body.listing);
     await newListing.save();
@@ -99,7 +115,25 @@ app.post(
   })
 );
 
+// posting a review
+
+app.post(
+  "/listings/:id/reviews",
+  validateReview,
+  wrapAsync(async (req, res) => {
+    let { id } = req.params;
+    let listing = await Listing.findById(id);
+    let review = new Review(req.body.review);
+    await listing.reviews.push(review);
+    await review.save();
+    await listing.save();
+    console.log("review added");
+    res.redirect(`/listings/${id}`);
+  })
+);
+
 //delete listing
+
 app.delete(
   "/listings/:id",
   wrapAsync(async (req, res) => {

@@ -38,7 +38,12 @@
   <hr />
   <div class="reviews col-8 offset-2">
     <h1>Leave a Review</h1>
-    <form action="">
+    <form
+      action="/listings/<%= listing.id %>/reviews"
+      method="post"
+      class="needs-validation"
+      novalidate
+    >
       <div class="ratings">
         <label for="ratings" class="form-label">Ratings:</label>
         <input
@@ -53,14 +58,22 @@
       <div class="comment">
         <label for="comment" class="form-label">Comments:</label>
         <textarea
-          name="listing[comment]"
+          name="review[comment]"
           id="comment"
           rows="5"
           cols="20"
           class="form-control mb-3"
+          required
         ></textarea>
+        <div class="invalid-feedback">Comment required!</div>
       </div>
       <button class="btn btn-dark mb-2">Submit</button>
     </form>
+    <h4>All Reviews</h4>
+    <ul>
+      <% for(review of listing.reviews) { %>
+      <li><%= review.comment %>, &nbsp;<%= review.rating %>stars</li>
+      <% } %>
+    </ul>
   </div>
 </body>
