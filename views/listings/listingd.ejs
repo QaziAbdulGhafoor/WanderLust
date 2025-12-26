@@ -1,7 +1,7 @@
 <% layout("../layouts/boilerplate") %>
 <body>
-  <div class="row col-10 offset-2">
-    <h2>Listing Details</h2>
+  <div class="row col-10 offset-2 mt-4 mb-2">
+    <h2><%=listing.title%></h2>
   </div>
 
   <div class="row">
@@ -13,8 +13,7 @@
           alt="listing_image"
         />
         <div class="card-body">
-          <h5 class="card-title"><%=listing.title%></h5>
-          <p class="card-text"><%=listing.description%></p>
+          <p class="card-text mt-2"><%=listing.description%></p>
         </div>
         <ul class="list-group list-group-flush">
           <li class="list-group-item li-det">Price: <%=listing.price%></li>
@@ -35,5 +34,33 @@
         </div>
       </div>
     </div>
+  </div>
+  <hr />
+  <div class="reviews col-8 offset-2">
+    <h1>Leave a Review</h1>
+    <form action="">
+      <div class="ratings">
+        <label for="ratings" class="form-label">Ratings:</label>
+        <input
+          type="range"
+          min="1"
+          max="5"
+          id="ratings"
+          name="review[rating]"
+          class="form-range"
+        />
+      </div>
+      <div class="comment">
+        <label for="comment" class="form-label">Comments:</label>
+        <textarea
+          name="listing[comment]"
+          id="comment"
+          rows="5"
+          cols="20"
+          class="form-control mb-3"
+        ></textarea>
+      </div>
+      <button class="btn btn-dark mb-2">Submit</button>
+    </form>
   </div>
 </body>
