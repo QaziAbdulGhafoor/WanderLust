@@ -10,6 +10,7 @@ const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
 const { listingSchema, reviewSchema } = require("./schema.js");
 const Joi = require("joi");
+const { wrap } = require("module");
 
 // validation for adding a new listing
 
@@ -128,6 +129,17 @@ app.post(
     await review.save();
     await listing.save();
     console.log("review added");
+    res.redirect(`/listings/${id}`);
+  })
+);
+
+//deleting a review
+app.delete(
+  "/listings/:id/reviews/:reviewId",
+  wrapAsync(async (req, res) => {
+    let { id, reviewId } = req.params;
+    await Listing.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
+    await Review.findByIdAndDelete(reviewId);
     res.redirect(`/listings/${id}`);
   })
 );
